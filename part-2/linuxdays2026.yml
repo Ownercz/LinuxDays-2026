@@ -1,0 +1,19 @@
+---
+
+- hosts: all
+  handlers:
+    - name: Echo change to log
+      ansible.builtin.debug:
+        msg: "linuxdays2026 file has been changed"
+      listen: linuxdays2026-handler
+  tasks:
+    # Task obsahuje tři chyby, které je potřeba opravit.
+    - name: Copy LD2026 file to /opt directory
+      ansible.builtin.copy:
+        src: LD2026
+        dst: /op/LD2026
+        user: root
+        group: root
+        mode: '0644'
+      notify: linuxdays2026-handler
+      when: inventory_hostname != "eva"

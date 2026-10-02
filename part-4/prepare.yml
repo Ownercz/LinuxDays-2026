@@ -1,0 +1,32 @@
+- name: Bring up docker containers for docker connection inventory iface
+  hosts: localhost
+  pre_tasks: # run docker-stop.sh script to clean up old containers
+    - name: Run docker-stop.sh script to clean up old containers
+      ansible.builtin.command: ./docker-stop.sh
+      args:
+        chdir: "{{ playbook_dir }}"
+  roles:
+    - role: workshop_docker
+      workshop_docker_names: "{{ groups['all'] }}"
+      workshop_docker_image: "ownercz/docker-ubuntu2404-systemd"
+- hosts: all
+  gather_facts: False
+  pre_tasks:
+    - name: Wait for containers to be up
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+    - name: Install python for Ansible
+      ansible.builtin.raw: test -e /usr/bin/python || (apt -y update && apt install -y python3 python3-minimal)
+    - name: Check ansible deps
+      ansible.builtin.apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - python3
+        - python3-apt
+        - lsb-release
+    - name: Gather facts
+      ansible.builtin.setup: # aka gather_facts
+  tasks:
+    - name: "Say hello to my new containers"
+      ansible.builtin.ping:

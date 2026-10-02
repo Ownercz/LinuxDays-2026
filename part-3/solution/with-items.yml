@@ -1,0 +1,19 @@
+---
+
+# Nainstalujte libovolný editor (vi, nano vim, emacs) na některou z instancí dle libosti (nebo všechny)
+- name: Install editor
+  hosts: all
+  vars:
+    install_editor:
+      - vim
+      - nano
+      - emacs
+  tasks:
+    - name: Install editor(s)
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items: "{{ install_editor }}"
+

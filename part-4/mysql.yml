@@ -1,0 +1,6 @@
+---
+
+- name: Install and Configure MySQL Server
+  hosts: database_servers
+  roles:
+    - mysql

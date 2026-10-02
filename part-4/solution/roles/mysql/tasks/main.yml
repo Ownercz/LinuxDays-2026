@@ -1,0 +1,47 @@
+---
+
+- name: 1. Install mariadb-server package
+  ansible.builtin.apt:
+    name: mariadb-server
+    state: present
+
+- name: 2. Copy my.cnf configuration file
+  ansible.builtin.copy:
+    src: my.cnf
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart-mariadb
+
+# Bonus task using template module
+#- name: 2. Copy my.cnf configuration file from template
+#  ansible.builtin.template:
+#    src: my.cnf.j2
+#    dest: /etc/mysql/my.cnf
+#    owner: root
+#    group: root
+#    mode: '0644'
+#  notify: restart-mariadb
+
+- name: 3. Ensure mariadb service is started and enabled
+  ansible.builtin.service:
+    name: mariadb
+    state: started
+    enabled: true
+
+# Bonus tasks using mysql modules
+#- name: 4. Create a user
+#  community.mysql.mysql_user:
+#    name: "{{ db_user }}"
+#    password: "{{ db_password }}"
+#    host: "%"
+#    priv: "*.*:ALL,GRANT"
+#    state: present
+#
+#- name: 5. Create a database
+#  community.mysql.mysql_db:
+#    name: "{{ db_name }}"
+#    state: present
+#    encoding: utf8mb4
+#    collation: utf8mb4_general_ci

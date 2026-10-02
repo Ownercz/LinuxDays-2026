@@ -1,0 +1,9 @@
+# Whether to use systemd in the containers
+workshop_docker_use_systemd: true
+
+# Docker image to use for the containers
+workshop_docker_image: "{% if workshop_docker_use_systemd %} ownercz/docker-ubuntu2404-systemd {% else %} ubuntu:24.04 {% endif %}"
+
+# Container names will be workshop1, workshop2, ...
+workshop_docker_count: 3
+workshop_docker_names: "{{ query('sequence', 'start=1 end=' ~ workshop_docker_count) | map('regex_replace', '^(.*)$', 'workshop\\1') | list }}"

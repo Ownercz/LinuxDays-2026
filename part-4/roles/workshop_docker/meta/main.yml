@@ -1,0 +1,11 @@
+galaxy_info:
+  author: Petr Krch
+  description: Simple role to provision Docker containers for workshops on Ubuntu 24.04
+  license: MIT
+  min_ansible_version: 2.13
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "24.04"
+dependencies: []
+

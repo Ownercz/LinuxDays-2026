@@ -1,0 +1,14 @@
+- name: Run workshop containers
+  community.docker.docker_container:
+    name: "{{ item }}"
+    image: "{{ workshop_docker_image }}"
+    privileged: "{{ workshop_docker_use_systemd | bool }}"
+    cgroupns_mode: "{{ 'host' if workshop_docker_use_systemd | bool else omit }}"
+    volumes: >-
+      {{ ['/sys/fs/cgroup:/sys/fs/cgroup:rw'] if workshop_docker_use_systemd | bool else [] }}
+    command: "{{ '/sbin/init' if workshop_docker_use_systemd | bool else 'sleep infinity' }}"
+    detach: true
+    tty: true
+    state: started
+  loop: "{{ workshop_docker_names }}"
+

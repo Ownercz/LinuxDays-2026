@@ -1,0 +1,7 @@
+---
+
+- name: Restart mariadb service
+  ansible.builtin.systemd:
+    name: mariadb
+    state: restarted
+  listen: restart-mariadb

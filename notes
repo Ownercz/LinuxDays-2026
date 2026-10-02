@@ -1,0 +1,18 @@
+part1
+ prace s inventory (pridat instance + groupy)
+ vyzkouset ad-hoc commands (ping, setup, shell)
+part2
+ do existujiciho playbooku pridat task s instalaci baliku nano/vim (dle volby)
+part3
+  debug chybne role
+part4
+ - do existujici role na mariadb (obsahuje pouze instalaci baliku) pridat task debug pro vypis verze
+ - pridat kopirovani konfigu z file
+ - pridat handler pri zmene
+ - prepsat na file na template
+ - vytvorit group_vars/host_vars na zmenu verze
+ - ukazat praci s mysql modulem
+ - uri?
+ - vault?
+
+

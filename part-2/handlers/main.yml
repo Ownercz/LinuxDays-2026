@@ -1,0 +1,6 @@
+---
+
+- name: Echo change to log
+  ansible.builtin.debug:
+    msg: "linuxdays2026 soubor byl změněn!"
+    listen: linuxdays2026-handler

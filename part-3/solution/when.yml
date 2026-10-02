@@ -1,0 +1,14 @@
+---
+
+# Nainstalujte libovolný editor (vi, nano vim, emacs) na některou z instancí dle libosti (nebo všechny)
+- name: Install editor
+  hosts: all
+  tasks:
+    - name: Install vim
+      ansible.builtin.apt:
+        name: vim
+        state: present
+        update_cache: true
+      when: inventory_hostname == "adam" or inventory_hostname == "eva"
+#      when: install_vim
+
