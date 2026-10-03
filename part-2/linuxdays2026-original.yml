@@ -2,17 +2,17 @@
 
 - hosts: all
   handlers:
-    - name: 1st handler - Echo change to log
+    - name: Echo change to log
       ansible.builtin.debug:
         msg: "linuxdays2026 file has been changed"
       listen: linuxdays2026-handler
   tasks:
     # Task obsahuje tři chyby, které je potřeba opravit.
-    - name: 1st task - Copy LD2026 file to /opt directory
+    - name: Copy LD2026 file to /opt directory
       ansible.builtin.copy:
         src: LD2026
-        dest: /opt/LD2026
-        owner: root
+        dst: /op/LD2026
+        user: root
         group: root
         mode: '0644'
       notify: linuxdays2026-handler
