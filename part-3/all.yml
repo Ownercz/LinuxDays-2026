@@ -1,3 +1,12 @@
 ---
 
 # Nainstalujte libovolný editor (vi, nano vim, emacs) na některou z instancí dle libosti (nebo všechny)
+
+- hosts: all
+  tasks:
+    - name: install fucking vim
+      ansible.builtin.apt:
+        name: vim
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
