@@ -1,0 +1,3 @@
+ansible.builtin.ping je jenom ping, ale takhle je to lepe zapsane a specifikovane
+
+pak se spewcifikuje state (present, absent... atd.)
