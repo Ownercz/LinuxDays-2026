@@ -8,7 +8,7 @@
   roles:
     - role: workshop_docker
       workshop_docker_names: "{{ groups['all'] }}"
-      workshop_docker_image: "ownercz/docker-ubuntu2404-systemd"
+      workshop_docker_image: "ownercz/linuxdays-ubuntu-systemd"
 - hosts: all
   gather_facts: False
   pre_tasks:

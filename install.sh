@@ -10,6 +10,30 @@ echo "==============================================================="
 VENV_DIR="/opt/python-venv-ansible"
 ANSIBLE_VERSION="11.1.0"
 ADDED_TO_BASHRC=0
+ROOT_MODE=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --root) ROOT_MODE=1 ;;
+    *) echo "Usage: $0 [--root]" >&2; exit 2 ;;
+  esac
+done
+
+if (( ROOT_MODE && EUID != 0 )); then
+  if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+    echo "Run this script as a command to use --root: sudo bash ${BASH_SOURCE[0]} --root" >&2
+    return 2
+  fi
+  exec sudo -- bash "${BASH_SOURCE[0]}" --root
+fi
+
+run_as_admin() {
+  if (( EUID == 0 )); then
+    "$@"
+  else
+    sudo "$@"
+  fi
+}
 
 # Basic OS check (non-fatal)
 if [ -f /etc/os-release ]; then
@@ -20,21 +44,26 @@ if [ -f /etc/os-release ]; then
   esac
 fi
 
+echo "Requesting administrator access..."
+if (( EUID != 0 )); then
+  sudo -v
+fi
+
 echo "[1/6] Installing system packages (python3, python3-venv, wget, gpg)..."
-sudo apt-get update -y
-sudo apt-get install -y python3 python3-venv python3-pip wget gpg
+run_as_admin apt-get update -y
+run_as_admin apt-get install -y python3 python3-venv python3-pip wget gpg
 
 echo "[2/6] Installing Visual Studio Code"
-sudo install -d -m 0755 /etc/apt/keyrings
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
-sudo apt-get update -y
-sudo apt-get install -y code
+run_as_admin install -d -m 0755 /etc/apt/keyrings
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | run_as_admin tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | run_as_admin tee /etc/apt/sources.list.d/vscode.list > /dev/null
+run_as_admin apt-get update -y
+run_as_admin apt-get install -y code
 
 echo "[3/6] Creating virtualenv: $VENV_DIR"
 if [ ! -d "$VENV_DIR" ]; then
-  sudo mkdir -p "$VENV_DIR"
-  sudo chown "$(id -u)":"$(id -g)" "$VENV_DIR"
+  run_as_admin mkdir -p "$VENV_DIR"
+  run_as_admin chown "$(id -u)":"$(id -g)" "$VENV_DIR"
   python3 -m venv "$VENV_DIR"
 else
   echo "Virtualenv already exists, skipping."
