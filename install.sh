@@ -20,11 +20,18 @@ if [ -f /etc/os-release ]; then
   esac
 fi
 
-echo "[1/5] Installing system packages (python3, python3-venv)..."
+echo "[1/6] Installing system packages (python3, python3-venv, wget, gpg)..."
 sudo apt-get update -y
-sudo apt-get install -y python3 python3-venv python3-pip
+sudo apt-get install -y python3 python3-venv python3-pip wget gpg
 
-echo "[2/5] Creating virtualenv: $VENV_DIR"
+echo "[2/6] Installing Visual Studio Code"
+sudo install -d -m 0755 /etc/apt/keyrings
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+sudo apt-get update -y
+sudo apt-get install -y code
+
+echo "[3/6] Creating virtualenv: $VENV_DIR"
 if [ ! -d "$VENV_DIR" ]; then
   sudo mkdir -p "$VENV_DIR"
   sudo chown "$(id -u)":"$(id -g)" "$VENV_DIR"
@@ -33,11 +40,11 @@ else
   echo "Virtualenv already exists, skipping."
 fi
 
-echo "[3/5] Activating virtualenv"
+echo "[4/6] Activating virtualenv"
 # shellcheck disable=SC1090
 source "$VENV_DIR/bin/activate"
 
-echo "[4/5] Upgrading pip and installing Ansible $ANSIBLE_VERSION"
+echo "[5/6] Upgrading pip and installing Ansible $ANSIBLE_VERSION"
 python -m pip install --upgrade pip
 if ! python -m pip install "ansible==${ANSIBLE_VERSION}"; then
   echo "Warning: Installation of ansible==${ANSIBLE_VERSION} failed. Trying latest available version..."
@@ -46,7 +53,7 @@ fi
 echo "Installing Python 'requests' library"
 python -m pip install requests
 
-echo "[5/5] Checking versions"
+echo "[6/6] Checking versions"
 echo -n "Python: "; python --version
 echo -n "Pip:    "; pip --version
 echo -n "Ansible:"; ansible --version | head -n1 || echo " Ansible is not available."
